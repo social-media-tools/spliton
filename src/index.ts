@@ -1,2 +1,3 @@
-export * from './lib/async';
-export * from './lib/number';
+import { Spliton } from './lib/spliton/spliton';
+
+export { Spliton };

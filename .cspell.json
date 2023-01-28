@@ -21,7 +21,10 @@
     "sandboxed",
     "transpiled",
     "typedoc",
-    "untracked"
+    "untracked",
+    "Spliton",
+    "spliton",
+    "Fmpeg"
   ],
   "flagWords": [],
   "ignorePaths": [
