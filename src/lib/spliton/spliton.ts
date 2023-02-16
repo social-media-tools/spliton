@@ -83,6 +83,7 @@ export class Spliton {
   entries: SplitEntry[] = [];
   inputPath!: string;
   ext!: string;
+  outDir!: string;
 
   private get ffmpeg() {
     return this.ffmpegPath || 'ffmpeg';
@@ -117,7 +118,8 @@ export class Spliton {
       const t = `-t ${entry.t}`;
       const c = `-c copy`;
       const map = `-map 0`;
-      command += ` ${ss} ${t} ${c} ${map} ${entry.filename}`;
+      const outFile = path.join(this.outDir, entry.filename);
+      command += ` ${ss} ${t} ${c} ${map} ${outFile}`;
     }
     return command;
   }
@@ -146,6 +148,11 @@ export class Spliton {
 
   setCustomFFmpegPath(ffmpegPath: string) {
     this.ffmpegPath = ffmpegPath;
+    return this;
+  }
+
+  setOutDir(outDir: string) {
+    this.outDir = outDir;
     return this;
   }
 
