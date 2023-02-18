@@ -63,10 +63,5 @@ test('Fails on invalid ffmpeg command', async (t) => {
     .setOutDir(path.join(__dirname, 'temp'))
     .run(videoPath);
 
-  for (const record of data) {
-    if (record.errorMessage) {
-      t.pass();
-      break;
-    }
-  }
+  t.not(data[0].errorMessage, null);
 });
