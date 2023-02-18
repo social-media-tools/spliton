@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import crypto from 'crypto';
+import os from 'os';
 import path from 'path';
 
 type SplitEntry = {
@@ -12,6 +13,10 @@ type FFMpegEntry = {
   ss: string;
   t: string;
 };
+
+// type FFMpegCommand = {
+//   cmd: string;
+// };
 
 type ClockTime =
   | '00'
@@ -84,9 +89,29 @@ export class Spliton {
   inputPath!: string;
   ext!: string;
   outDir!: string;
+  _shell!: string;
 
   private get ffmpeg() {
     return this.ffmpegPath || 'ffmpeg';
+  }
+
+  private get shell() {
+    if (this._shell) return this._shell;
+    const p = os.platform();
+    switch (p) {
+      case 'linux': {
+        return (this._shell = 'bash');
+      }
+      case 'win32': {
+        return (this._shell = 'PowerShell');
+      }
+      case 'darwin': {
+        return (this._shell = 'zsh');
+      }
+      default: {
+        throw new Error(`Not supported platform '${p}'`);
+      }
+    }
   }
 
   private get _ext() {
@@ -109,19 +134,21 @@ export class Spliton {
     return ffmpegEntries;
   }
 
-  private getCommand(ffmpegEntries: FFMpegEntry[]) {
+  private getCommands(ffmpegEntries: FFMpegEntry[]) {
+    const commands: string[] = [];
     //ss 00:00:00 -t 00:00:05 -c copy -map 0 output1.mp4 -ss 00:00:05 -t 00:00:05 -c copy -map 0 output2.mp4
     const input = `-i ${this.inputPath}`;
-    let command = `${this.ffmpeg} ${input}`;
     for (const entry of ffmpegEntries) {
+      let command = `${this.ffmpeg} `;
       const ss = `-ss ${entry.ss}`;
       const t = `-t ${entry.t}`;
       const c = `-c copy`;
       const map = `-map 0`;
       const outFile = path.join(this.outDir, entry.filename);
-      command += ` ${ss} ${t} ${c} ${map} ${outFile}`;
+      command += ` ${ss} ${t} ${input} ${c} ${map} ${outFile}`;
+      commands.push(command);
     }
-    return command;
+    return commands;
   }
 
   private validateEntries() {
@@ -166,15 +193,21 @@ export class Spliton {
     this.inputPath = inputPath;
     this.validateEntries();
     const ffmpegEntries = this.getFfmpegEntries();
-    await this.callFfmpeg(ffmpegEntries);
+    const commands = this.getCommands(ffmpegEntries);
+    for await (const cmd of commands) {
+      try {
+        await this.callFfmpeg(cmd);
+      } catch (error) {
+        const e = error as Error;
+        console.log(`Error, ${e.stack}`);
+      }
+    }
     return ffmpegEntries;
   }
 
-  private callFfmpeg(ffmpegEntries: FFMpegEntry[]) {
+  private callFfmpeg(ffmpegCmd: string) {
     return new Promise((resolve, reject) => {
-      const cmd = this.getCommand(ffmpegEntries);
-      console.log({ cmd });
-      const proc = spawn(cmd, { shell: 'bash' });
+      const proc = spawn(ffmpegCmd, { shell: this.shell });
       proc.once('error', reject);
       proc.once('close', resolve);
     });
