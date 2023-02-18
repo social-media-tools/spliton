@@ -11,11 +11,9 @@ type FFMpegEntry = {
   filename: string;
   ss: string;
   t: string;
+  errorMessage?: string;
+  cmd?: string;
 };
-
-// type FFMpegCommand = {
-//   cmd: string;
-// };
 
 type ClockTime =
   | '00'
@@ -113,21 +111,16 @@ export class Spliton {
     return ffmpegEntries;
   }
 
-  private getCommands(ffmpegEntries: FFMpegEntry[]) {
-    const commands: string[] = [];
-    //ss 00:00:00 -t 00:00:05 -c copy -map 0 output1.mp4 -ss 00:00:05 -t 00:00:05 -c copy -map 0 output2.mp4
+  private getCommand(entry: FFMpegEntry) {
     const input = `-i ${this.inputPath}`;
-    for (const entry of ffmpegEntries) {
-      let command = `${this.ffmpeg} `;
-      const ss = `-ss ${entry.ss}`;
-      const t = `-t ${entry.t}`;
-      const c = `-c copy`;
-      const map = `-map 0`;
-      const outFile = path.join(this.outDir, entry.filename);
-      command += ` ${ss} ${t} ${input} ${c} ${map} ${outFile}`;
-      commands.push(command);
-    }
-    return commands;
+    let command = `${this.ffmpeg} `;
+    const ss = `-ss ${entry.ss}`;
+    const t = `-t ${entry.t}`;
+    const c = `-c copy`;
+    const map = `-map 0`;
+    const outFile = path.join(this.outDir, entry.filename);
+    command += ` ${ss} ${t} ${input} ${c} ${map} ${outFile}`;
+    return command;
   }
 
   private validateEntries() {
@@ -172,13 +165,13 @@ export class Spliton {
     this.inputPath = inputPath;
     this.validateEntries();
     const ffmpegEntries = this.getFfmpegEntries();
-    const commands = this.getCommands(ffmpegEntries);
-    for await (const cmd of commands) {
+    for await (const entry of ffmpegEntries) {
+      entry.cmd = this.getCommand(entry);
       try {
-        await this.callFfmpeg(cmd);
+        await this.callFfmpeg(entry.cmd);
       } catch (error) {
         const e = error as Error;
-        console.log(`Error, ${e.stack}`);
+        entry.errorMessage = e.message;
       }
     }
     return ffmpegEntries;
@@ -187,8 +180,21 @@ export class Spliton {
   private callFfmpeg(ffmpegCmd: string) {
     return new Promise((resolve, reject) => {
       const proc = spawn(ffmpegCmd, { shell: process.env.SHELL });
-      proc.once('error', reject);
-      proc.once('close', resolve);
+
+      let err = '';
+      proc.stderr.on('data', (data) => (err += data.toString()));
+
+      /* istanbul ignore next */
+      proc.once('error', (err) => {
+        return reject(err);
+      });
+      /* istanbul ignore next */
+      proc.once('close', (errorCode) => {
+        if (errorCode === 0) {
+          return resolve(true);
+        }
+        reject(new Error(err));
+      });
     });
   }
 

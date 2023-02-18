@@ -50,3 +50,23 @@ test('Validates ffmpeg entries', async (t) => {
     t.is(e.message, 'invalid entry splits');
   }
 });
+
+test('Fails on invalid ffmpeg command', async (t) => {
+  const assetDir = getAssetsDir();
+  const videoPath = path.join(assetDir, 'sample.mp5');
+
+  const data = await new Spliton()
+    .add({
+      startTime: '02',
+      endTime: '04',
+    })
+    .setOutDir(path.join(__dirname, 'temp'))
+    .run(videoPath);
+
+  for (const record of data) {
+    if (record.errorMessage) {
+      t.pass();
+      break;
+    }
+  }
+});
