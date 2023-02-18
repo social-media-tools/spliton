@@ -1,6 +1,5 @@
 import { spawn } from 'child_process';
 import crypto from 'crypto';
-import os from 'os';
 import path from 'path';
 
 type SplitEntry = {
@@ -89,29 +88,9 @@ export class Spliton {
   inputPath!: string;
   ext!: string;
   outDir!: string;
-  _shell!: string;
 
   private get ffmpeg() {
     return this.ffmpegPath || 'ffmpeg';
-  }
-
-  private get shell() {
-    if (this._shell) return this._shell;
-    const p = os.platform();
-    switch (p) {
-      case 'linux': {
-        return (this._shell = 'bash');
-      }
-      case 'win32': {
-        return (this._shell = 'PowerShell');
-      }
-      case 'darwin': {
-        return (this._shell = 'zsh');
-      }
-      default: {
-        throw new Error(`Not supported platform '${p}'`);
-      }
-    }
   }
 
   private get _ext() {
@@ -207,7 +186,7 @@ export class Spliton {
 
   private callFfmpeg(ffmpegCmd: string) {
     return new Promise((resolve, reject) => {
-      const proc = spawn(ffmpegCmd, { shell: this.shell });
+      const proc = spawn(ffmpegCmd, { shell: process.env.SHELL });
       proc.once('error', reject);
       proc.once('close', resolve);
     });
