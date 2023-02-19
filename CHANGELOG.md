@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/social-media-tools/spliton/compare/v0.0.4...v0.0.5) (2023-02-19)
+
+
+### Bug Fixes
+
+* updated package information ([3d3a792](https://github.com/social-media-tools/spliton/commit/3d3a792f4b000346c455b09a7913ef6219fe5073))
+
 ### [0.0.4](https://github.com/social-media-tools/spliton/compare/v0.0.3...v0.0.4) (2023-02-18)
 
 

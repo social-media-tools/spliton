@@ -1,13 +1,18 @@
 {
   "name": "spliton",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Split audio or video files into chunks",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "repository": "https://github.com/social-media-tools/spliton",
   "license": "MIT",
-  "keywords": ["ffmpeg", "split", "media", "trim"],
+  "keywords": [
+    "ffmpeg",
+    "split",
+    "media",
+    "trim"
+  ],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
