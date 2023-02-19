@@ -2,20 +2,20 @@
 
 Split audio or video files into chunks.
 
-# Usage
+# Usage (Examples)
 
 ```js
 const outDir = '/home/user/cut-videos';
 
 const splitEntries = [
-    {
-        "startTime": "00:05",
-        "endTime": "00:10"
-    },
-    {
-        "startTime": "00:10",
-        "endTime": "00:30"
-    } 
+  {
+    startTime: '00:05',
+    endTime: '00:10',
+  },
+  {
+    startTime: '00:10',
+    endTime: '00:30',
+  },
 ];
 
 const sourceFile = '/home/user/videos/sample.mp4';
@@ -40,5 +40,22 @@ const data = await new Spliton()
       }
   ]
  */
-
 ```
+
+# Dependencies
+
+- Requires ffmpeg to be available.
+- To set custom ffmpeg path:
+
+```js
+const customFFmpegPath = '/usr/bin/ffmpeg';
+const sourceFile = '/home/user/videos/sample.mp4';
+
+const data = await new Spliton()
+  .setCustomFFmpegPath(customFFmpegPath);
+  .setOutDir(outDir)
+  .add(splitEntries)
+  .run(sourceFile);
+```
+
+- Or set ffmpeg binary to be available under **PATH** environment variable.

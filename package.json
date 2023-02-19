@@ -7,7 +7,7 @@
   "module": "build/module/index.js",
   "repository": "https://github.com/social-media-tools/spliton",
   "license": "MIT",
-  "keywords": [],
+  "keywords": ["ffmpeg", "split", "media", "trim"],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
