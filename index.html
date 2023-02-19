@@ -68,20 +68,20 @@
 					<h1>spliton</h1>
 				</a>
 				<p>Split audio or video files into chunks.</p>
-				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-					<h1>Usage</h1>
+				<a href="#usage-examples" id="usage-examples" style="color: inherit; text-decoration: none;">
+					<h1>Usage (Examples)</h1>
 				</a>
 				<pre><code class="language-js"><span class="hljs-keyword">const</span> outDir = <span class="hljs-string">&#x27;/home/user/cut-videos&#x27;</span>;
 
 <span class="hljs-keyword">const</span> splitEntries = [
-    {
-        <span class="hljs-string">&quot;startTime&quot;</span>: <span class="hljs-string">&quot;00:05&quot;</span>,
-        <span class="hljs-string">&quot;endTime&quot;</span>: <span class="hljs-string">&quot;00:10&quot;</span>
-    },
-    {
-        <span class="hljs-string">&quot;startTime&quot;</span>: <span class="hljs-string">&quot;00:10&quot;</span>,
-        <span class="hljs-string">&quot;endTime&quot;</span>: <span class="hljs-string">&quot;00:30&quot;</span>
-    } 
+  {
+    <span class="hljs-attr">startTime</span>: <span class="hljs-string">&#x27;00:05&#x27;</span>,
+    <span class="hljs-attr">endTime</span>: <span class="hljs-string">&#x27;00:10&#x27;</span>,
+  },
+  {
+    <span class="hljs-attr">startTime</span>: <span class="hljs-string">&#x27;00:10&#x27;</span>,
+    <span class="hljs-attr">endTime</span>: <span class="hljs-string">&#x27;00:30&#x27;</span>,
+  },
 ];
 
 <span class="hljs-keyword">const</span> sourceFile = <span class="hljs-string">&#x27;/home/user/videos/sample.mp4&#x27;</span>;
@@ -107,6 +107,25 @@
   ]
  */</span>
 </code></pre>
+				<a href="#dependencies" id="dependencies" style="color: inherit; text-decoration: none;">
+					<h1>Dependencies</h1>
+				</a>
+				<ul>
+					<li>Requires ffmpeg to be available.</li>
+					<li>To set custom ffmpeg path:</li>
+				</ul>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> customFFmpegPath = <span class="hljs-string">&#x27;/usr/bin/ffmpeg&#x27;</span>;
+<span class="hljs-keyword">const</span> sourceFile = <span class="hljs-string">&#x27;/home/user/videos/sample.mp4&#x27;</span>;
+
+<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> Spliton()
+  .setCustomFFmpegPath(customFFmpegPath);
+  .setOutDir(outDir)
+  .add(splitEntries)
+  .run(sourceFile);
+</code></pre>
+				<ul>
+					<li>Or set ffmpeg binary to be available under <strong>PATH</strong> environment variable.</li>
+				</ul>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
