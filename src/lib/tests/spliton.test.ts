@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 
 import test from 'ava';
@@ -64,4 +65,22 @@ test('Fails on invalid ffmpeg command', async (t) => {
     .run(videoPath);
 
   t.not(data[0].errorMessage, null);
+});
+
+test('Creates correct audio file when _isAudio is set to true and audio file is provided', async (t) => {
+  const assetDir = getAssetsDir();
+  const audioPath = path.join(assetDir, 'sample.mp3');
+  const outputDir = path.join(__dirname, 'temp');
+
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  const data = await new Spliton()
+    .add({
+      startTime: '00',
+      endTime: '05',
+    })
+    .setOutDir(outputDir)
+    .run(audioPath);
+
+  t.is(data[0].errorMessage, undefined);
 });

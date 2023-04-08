@@ -116,10 +116,21 @@ export class Spliton {
     let command = `${this.ffmpeg} `;
     const ss = `-ss ${entry.ss}`;
     const t = `-t ${entry.t}`;
-    const c = `-c copy`;
+
     const map = `-map 0`;
+
+    // Check if the input file is an audio file
+
     const outFile = path.join(this.outDir, entry.filename);
-    command += ` ${ss} ${t} ${input} ${c} ${map} ${outFile}`;
+    const isAudio = ['.mp3', '.wav', '.m4a'].includes(this._ext);
+
+    if (isAudio) {
+      command += ` ${ss} ${t} ${input} ${map} -c:a copy ${outFile}`;
+    } else {
+      const c = `-c copy`;
+      command += ` ${ss} ${t} ${input} ${c} ${map} ${outFile}`;
+    }
+
     return command;
   }
 
