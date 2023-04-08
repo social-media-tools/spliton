@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/social-media-tools/spliton/compare/v0.0.5...v0.0.6) (2023-04-08)
+
+
+### Bug Fixes
+
+* added support for audio file splitting ([29dd4fa](https://github.com/social-media-tools/spliton/commit/29dd4fac60bb0349b4ab8993d8a761f3fa32e282))
+
 ### [0.0.5](https://github.com/social-media-tools/spliton/compare/v0.0.4...v0.0.5) (2023-02-19)
 
 
